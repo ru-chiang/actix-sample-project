@@ -1,16 +1,16 @@
-use actix_web::{Error, http, HttpResponse, web};
 
 use crate::db::MongodbCrudService;
 
 use super::{Address, ADDRESS_SERVICE};
-use crate::utils::common::{ResponseResult, Resp, ApplicationError};
+use crate::utils::common::{ResponseResult, Resp};
 use bson::oid::ObjectId;
+use actix_web::web;
 
 pub async fn save(
     address: web::Json<Address>
 ) -> ResponseResult {
     let address: Address = address.into_inner();
-    let res = ADDRESS_SERVICE.db_create_resource(address)
+    let res = ADDRESS_SERVICE.add_new_address(address)
         .await?;
     Resp::ok(res).to_json_result()
 }
@@ -20,7 +20,6 @@ pub async fn get_all() -> ResponseResult {
         .await?;
     Resp::ok(res).to_json_result()
 }
-
 
 pub async fn get(
     id: web::Path<String>

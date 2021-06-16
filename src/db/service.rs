@@ -21,12 +21,7 @@ pub trait MongodbCrudService<T>
 
     fn table(&self) -> Collection;
 
-    // async fn list_with_filter(&self, filter: Document) -> mongodb::error::Result<Vec<T>> {
-    //     let cursor = self.table().find(Some(filter), None).await?;
-    //     Ok(cursor.into_vec::<T>().await)
-    // }
-
-    /// return inserted id
+    // return inserted id
     async fn db_create_resource(&self, record: T) -> Result<T, ApplicationError> {
         let d: Document = struct_to_document(&record).unwrap();
         let rs = self.table().insert_one(d, None)?;
