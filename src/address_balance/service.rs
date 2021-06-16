@@ -8,7 +8,7 @@ use mongodb::Collection;
 
 use crate::address::ADDRESS_SERVICE;
 use crate::db::{collection, MongodbCrudService};
-use crate::utils::common::BusinessError;
+use crate::utils::common::ApplicationError;
 use crate::utils::request::get_balance_by_address;
 use super::AddressBalance;
 
@@ -32,7 +32,7 @@ impl MongodbCrudService<AddressBalance> for AddressBalanceService {
 }
 
 impl AddressBalanceService {
-    pub async fn refresh_balance(&self) -> Result<Value, BusinessError> {
+    pub async fn refresh_balance(&self) -> Result<Value, ApplicationError> {
         let addresses = ADDRESS_SERVICE.db_read_all_resources().await?;
         info!("addresses {:?}", addresses);
 

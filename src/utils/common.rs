@@ -71,7 +71,7 @@ impl<T: Serialize> Resp<T> {
         }
     }
 
-    pub fn to_json_result(&self) -> Result<HttpResponse, BusinessError> {
+    pub fn to_json_result(&self) -> Result<HttpResponse, ApplicationError> {
         Ok(HttpResponse::Ok().json(self))
     }
 }
@@ -87,11 +87,11 @@ impl Resp<()> {
 }
 
 
-pub type RespResult = Result<HttpResponse, BusinessError>;
+pub type ResponseResult = Result<HttpResponse, ApplicationError>;
 
 /// error format "code#message"
 #[derive(Error, Debug)]
-pub enum BusinessError {
+pub enum ApplicationError {
     #[error("10001#Validation error on field: {0}")]
     ValidationError(String),
     #[error("10002#argument error")]
@@ -104,7 +104,7 @@ pub enum BusinessError {
     },
 }
 
-impl BusinessError {
+impl ApplicationError {
     fn to_code(&self) -> i32 {
         let code = &self.to_string()[0..5];
         code.parse().unwrap_or(-1)
@@ -115,7 +115,7 @@ impl BusinessError {
     }
 }
 
-impl error::ResponseError for BusinessError {
+impl error::ResponseError for ApplicationError {
     fn error_response(&self) -> HttpResponse {
         let resp = Resp::err(self.to_code(), &self.to_message());
         HttpResponse::BadRequest().json(resp)

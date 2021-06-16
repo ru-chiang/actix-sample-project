@@ -6,10 +6,10 @@ use reqwest::Response;
 use crate::db::MongodbCrudService;
 
 use super::{ADDRESS_BALANCE_SERVICE, AddressBalance};
-use crate::utils::common::{RespResult, Resp};
+use crate::utils::common::{ResponseResult, Resp};
 
 
-pub async fn update_balance() -> RespResult {
+pub async fn update_balance() -> ResponseResult {
     let res = ADDRESS_BALANCE_SERVICE.refresh_balance().await?;
     Resp::ok(res).to_json_result()
 }

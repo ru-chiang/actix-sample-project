@@ -10,7 +10,7 @@ use mongodb::error::Error;
 use serde::de::DeserializeOwned;
 use serde::Serialize;
 
-use crate::utils::common::{BusinessError, CursorAsVec, struct_to_document};
+use crate::utils::common::{ApplicationError, CursorAsVec, struct_to_document};
 
 #[async_trait(? Send)]
 pub trait MongodbCrudService<T>
@@ -27,7 +27,7 @@ pub trait MongodbCrudService<T>
     // }
 
     /// return inserted id
-    async fn db_create_resource(&self, record: T) -> Result<T, BusinessError> {
+    async fn db_create_resource(&self, record: T) -> Result<T, ApplicationError> {
         let d: Document = struct_to_document(&record).unwrap();
         let rs = self.table().insert_one(d, None)?;
         let new_id: String = rs
@@ -41,7 +41,7 @@ pub trait MongodbCrudService<T>
             None,
         ).unwrap();
         match res {
-            None => Err(BusinessError::InternalError {
+            None => Err(ApplicationError::InternalError {
                 source: anyhow!("resource not found after insertion") }),
             Some(doc) => Ok(bson::from_bson(bson::Bson::Document(doc)).unwrap())
         }
@@ -58,7 +58,7 @@ pub trait MongodbCrudService<T>
     async fn db_read_resource(
         &self,
         id: &str,
-    ) -> Result<T, BusinessError> {
+    ) -> Result<T, ApplicationError> {
         let coll = self.table();
         let res = coll.find_one(
             Some(doc! {"_id" => ObjectId::with_string(id).unwrap()}),
@@ -66,14 +66,14 @@ pub trait MongodbCrudService<T>
         ).unwrap();
         info!("Retrieving address with id: {}", id);
         match res {
-            None => Err(BusinessError::InternalError {
+            None => Err(ApplicationError::InternalError {
                 source: anyhow!("resource not found") }),
             Some(doc) => Ok(bson::from_bson(bson::Bson::Document(doc)).unwrap())
         }
     }
 
     // return modified count
-    async fn update_by_oid(&self, oid: ObjectId, record: &T) -> Result<T, BusinessError> {
+    async fn update_by_oid(&self, oid: ObjectId, record: &T) -> Result<T, ApplicationError> {
         log::info!("update_by_oid");
         let filter = doc! {"_id": oid};
 
@@ -81,7 +81,7 @@ pub trait MongodbCrudService<T>
         let update = doc! {"$set": d};
         let result = self.table().find_one_and_update(filter, update, None).unwrap();
         match result {
-            None => Err(BusinessError::InternalError {
+            None => Err(ApplicationError::InternalError {
                 source: anyhow!("resource not found while update") }),
             Some(doc) => Ok(bson::from_bson(bson::Bson::Document(doc)).unwrap())
         }

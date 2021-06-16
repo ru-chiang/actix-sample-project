@@ -9,6 +9,7 @@ use crate::db::{collection, MongodbCrudService};
 
 use super::Address;
 use std::borrow::Borrow;
+use crate::utils::common::ApplicationError;
 
 lazy_static! {
     pub static ref ADDRESS_SERVICE: AddressService = AddressService::new();

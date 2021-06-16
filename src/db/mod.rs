@@ -4,7 +4,7 @@ use lazy_static::lazy_static;
 use mongodb::{Client, Collection};
 
 pub use service::*;
-use crate::utils::common::BusinessError;
+use crate::utils::common::ApplicationError;
 use anyhow::anyhow;
 mod service;
 
@@ -28,9 +28,9 @@ pub fn collection(coll_name: &str) -> Collection {
     MONGO.database("actix_db").collection(coll_name)
 }
 
-impl From<mongodb::error::Error> for BusinessError {
+impl From<mongodb::error::Error> for ApplicationError {
     fn from(e: mongodb::error::Error) -> Self {
         log::error!("mongodb error, {}", e.to_string());
-        BusinessError::InternalError { source: anyhow!(e) }
+        ApplicationError::InternalError { source: anyhow!(e) }
     }
 }
