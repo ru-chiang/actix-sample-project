@@ -1,11 +1,13 @@
 use std::env;
 
+use anyhow::anyhow;
 use lazy_static::lazy_static;
 use mongodb::{Client, Collection};
 
 pub use service::*;
+
 use crate::utils::common::ApplicationError;
-use anyhow::anyhow;
+
 mod service;
 
 lazy_static! {

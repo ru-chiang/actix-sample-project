@@ -6,15 +6,19 @@ use std::thread;
 use std::time::Duration;
 
 use actix_web::{App, HttpServer, web};
+use futures::executor;
 use job_scheduler::{Job, JobScheduler};
 use log::*;
 
 use utils::logging::init_logger;
 
+use crate::address_tx::ADDRESS_TX_SERVICE;
+
 mod utils;
 mod address;
 mod address_balance;
 mod db;
+mod address_tx;
 
 fn get_binding_address() -> String {
     let port = env::var("PORT").expect("PORT env not set.");
@@ -27,6 +31,7 @@ fn monitor_transaction_for_address() {
         .expect("MONITOR_TX_CRON env not set.");
     sched.add(Job::new(cron_expression.parse().unwrap(), || {
         info!("monitor_transaction_for_address");
+        executor::block_on(ADDRESS_TX_SERVICE.monitor_address_tx());
     }));
     loop {
         sched.tick();

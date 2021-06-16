@@ -1,10 +1,10 @@
+use actix_web::web;
+use bson::oid::ObjectId;
 
 use crate::db::MongodbCrudService;
+use crate::utils::common::{Resp, ResponseResult};
 
 use super::{Address, ADDRESS_SERVICE};
-use crate::utils::common::{ResponseResult, Resp};
-use bson::oid::ObjectId;
-use actix_web::web;
 
 pub async fn save(
     address: web::Json<Address>
@@ -31,7 +31,7 @@ pub async fn get(
 
 pub async fn update(
     id: web::Path<String>,
-    address: web::Json<Address>
+    address: web::Json<Address>,
 ) -> ResponseResult {
     let oid = ObjectId::with_string(&id).unwrap();
     let res = ADDRESS_SERVICE.update_by_oid(oid, &address)

@@ -1,10 +1,10 @@
+use actix_web::{error, HttpResponse};
 use bson::Document;
 use bson::oid::ObjectId;
 use bson::ordered::OrderedDocument;
 use log::*;
 use mongodb::Cursor;
 use serde::{Deserialize, Serialize, Serializer};
-use actix_web::{HttpResponse, error};
 use thiserror::Error;
 
 pub trait CursorAsVec {

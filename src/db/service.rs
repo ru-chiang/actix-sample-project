@@ -37,7 +37,8 @@ pub trait MongodbCrudService<T>
         ).unwrap();
         match res {
             None => Err(ApplicationError::InternalError {
-                source: anyhow!("resource not found after insertion") }),
+                source: anyhow!("resource not found after insertion")
+            }),
             Some(doc) => Ok(bson::from_bson(bson::Bson::Document(doc)).unwrap())
         }
     }
@@ -57,12 +58,13 @@ pub trait MongodbCrudService<T>
         let coll = self.table();
         let res = coll.find_one(
             Some(doc! {"_id" => ObjectId::with_string(id).unwrap()}),
-            None
+            None,
         ).unwrap();
         info!("Retrieving address with id: {}", id);
         match res {
             None => Err(ApplicationError::InternalError {
-                source: anyhow!("resource not found") }),
+                source: anyhow!("resource not found")
+            }),
             Some(doc) => Ok(bson::from_bson(bson::Bson::Document(doc)).unwrap())
         }
     }
@@ -77,10 +79,10 @@ pub trait MongodbCrudService<T>
         let result = self.table().find_one_and_update(filter, update, None).unwrap();
         match result {
             None => Err(ApplicationError::InternalError {
-                source: anyhow!("resource not found while update") }),
+                source: anyhow!("resource not found while update")
+            }),
             Some(doc) => Ok(bson::from_bson(bson::Bson::Document(doc)).unwrap())
         }
-
     }
 
     // return deleted count

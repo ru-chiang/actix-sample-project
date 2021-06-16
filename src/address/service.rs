@@ -1,8 +1,3 @@
-use std::borrow::Borrow;
-use std::collections::HashMap;
-use std::env;
-
-use anyhow::anyhow;
 use lazy_static::lazy_static;
 use log::*;
 use mongodb::Collection;
@@ -39,7 +34,7 @@ impl AddressService {
         s.push_str(address);
         s.push_str(" already exists");
         match res {
-            Some(doc) => {
+            Some(_) => {
                 error!("add_new_address::{}", s);
                 Err(ApplicationError::ValidationError(String::from("address")))
             }
